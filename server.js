@@ -9,6 +9,10 @@ const {
   userLeave,
   getRoomUsers,
 } = require("./utils/users");
+const createAdapter = require("@socket.io/redis-adapter").createAdapter;
+const redis = require("redis");
+require("dotenv").config();
+const { createClient } = redis;
 
 const app = express(); //creates an instance of Express by calling express() and gives access to all its methods like (app.get, app.post, app.listen)
 const server = http.createServer(app);
@@ -18,6 +22,27 @@ const io = socketio(server);
 //we want the public folder set as the static folder so we can access the HTML files to display our frontend, so we write the following express code while including the path module which is a node js core module
 app.use(express.static(path.join(__dirname, "public")));
 const botName = "ChatBot";
+
+//Redis setup
+(async () => {
+  try {
+    const pubClient = createClient({ url: "redis://127.0.0.1:6379" });
+    pubClient.on("connect", () =>
+      console.log("Connected to Redis successfully.")
+    );
+    pubClient.on("error", (err) =>
+      console.error("Redis connection error:", err)
+    );
+
+    await pubClient.connect();
+    const subClient = pubClient.duplicate();
+    await subClient.connect();
+
+    io.adapter(createAdapter(pubClient, subClient));
+  } catch (error) {
+    console.error("Error connecting to Redis:", error);
+  }
+})();
 
 //Run when a client connects
 io.on("connection", (socket) => {
