@@ -20,12 +20,11 @@ io.on("connection", (socket) => {
     const user = userJoin(socket.id, username, room);
   
     socket.join(user.room);
-    
     //Welcome current user
     socket.emit("message", formatMessage(botName, "Welcome to ChatApp!")); //socket.emit => sends message to the single user
 
     //Broadcast when a user connects
-    socket.broadcast
+  socket.broadcast
       .to(user.room)
       .emit(
         "message",
