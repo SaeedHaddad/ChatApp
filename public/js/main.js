@@ -1,8 +1,8 @@
 //client-side javascript
 const chatForm = document.getElementById("chat-form"); //to access the form element in chat.html
 const chatMessages = document.querySelector(".chat-messages");
-const roomName = document.getElementById('room-name');
-const userList = document.getElementById('users');
+const roomName = document.getElementById("room-name");
+const userList = document.getElementById("users");
 
 //Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
@@ -15,10 +15,10 @@ const socket = io(); //this is accessible through the script added in chat.html
 socket.emit("joinRoom", { username, room });
 
 //Get room and users
-socket.on('roomUsers', ({room, users})=>{
-    outputRoomName(room);
-    outputUsers(users);
-})
+socket.on("roomUsers", ({ room, users }) => {
+  outputRoomName(room);
+  outputUsers(users);
+});
 
 //Message from server
 socket.on("message", (message) => {
@@ -55,27 +55,16 @@ function outputMessage(message) {
 }
 
 //Add room name to DOM
-function outputRoomName(room){
-    roomName.innerText = room;
+function outputRoomName(room) {
+  roomName.innerText = room;
 }
 
 // Add users to DOM
 function outputUsers(users) {
-    userList.innerHTML = '';
-    users.forEach((user) => {
-      const li = document.createElement('li');
-      li.innerText = user.username;
-      userList.appendChild(li);
-    });
-  }
-
-  // Listen for the "Leave Room" button click
-const leaveBtn = document.getElementById('leave-btn');
-
-leaveBtn.addEventListener('click', () => {
-  // Emit the 'leaveRoom' event to the server
-  socket.emit('leaveRoom');
-
-  // Optionally, redirect to the homepage or room list
-  window.location.href = 'index.html';  // Adjust the redirect as needed
-});
+  userList.innerHTML = "";
+  users.forEach((user) => {
+    const li = document.createElement("li");
+    li.innerText = user.username;
+    userList.appendChild(li);
+  });
+}

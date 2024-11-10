@@ -35,15 +35,13 @@ io.on("connection", (socket) => {
         "message",
         formatMessage(botName, `${user.username} has joined the chat.`)
       ); //socket.broadcast.emit => sends a message to all the clients except the single client
- 
- //Send users and room info (sidebar)
- io.to(user.room).emit('roomUsers', {
-  room: user.room,
-  users: getRoomUsers(user.room)
- })
- 
- 
+
+    //Send users and room info (sidebar)
+    io.to(user.room).emit("roomUsers", {
+      room: user.room,
+      users: getRoomUsers(user.room),
     });
+  });
 
   //Listen for chatMessage
   socket.on("chatMessage", (msg) => {
@@ -53,35 +51,41 @@ io.on("connection", (socket) => {
   });
 
   // Handle user leaving the room manually
-socket.on('leaveRoom', () => {
-  const user = getCurrentUser(socket.id);  // Get the current user
+  socket.on("leaveRoom", () => {
+    const user = getCurrentUser(socket.id); // Get the current user
 
-  if (user) {
-    // Remove the user from the room
-    userLeave(socket.id);
+    if (user) {
+      // Remove the user from the room
+      userLeave(socket.id);
 
-    // Broadcast message that the user has left
-    io.to(user.room).emit("message", formatMessage(botName, `${user.username} has left the chat.`));
+      // Broadcast message that the user has left
+      io.to(user.room).emit(
+        "message",
+        formatMessage(botName, `${user.username} has left the chat.`)
+      );
 
-    // Send updated users and room info (sidebar)
-    io.to(user.room).emit('roomUsers', {
-      room: user.room,
-      users: getRoomUsers(user.room)
-    });
-  }
-});
+      // Send updated users and room info (sidebar)
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
+    }
+  });
 
   //Runs when client disconnects
   socket.on("disconnect", () => {
     const user = userLeave(socket.id);
     if (user) {
-      io.to(user.room).emit("message", formatMessage(botName, `${user.username} has left the chat.`)); //io.emit => sends a message to all clients in general
-    
-     //Send users and room info (sidebar)
- io.to(user.room).emit('roomUsers', {
-  room: user.room,
-  users: getRoomUsers(user.room)
- })
+      io.to(user.room).emit(
+        "message",
+        formatMessage(botName, `${user.username} has left the chat.`)
+      ); //io.emit => sends a message to all clients in general
+
+      //Send users and room info (sidebar)
+      io.to(user.room).emit("roomUsers", {
+        room: user.room,
+        users: getRoomUsers(user.room),
+      });
     }
   });
 });
