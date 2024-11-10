@@ -1,4 +1,4 @@
-const path = require("path"); // includes the 'path' module to help with file and directory path manipulations
+const path = require("path"); // includes the 'path' module to help with file and directory path manipulations.
 const express = require("express"); //includes the express module so we can use it in the app.
 const http = require("http");
 const socketio = require("socket.io");
@@ -17,7 +17,7 @@ const io = socketio(server);
 //Set static folder
 //we want the public folder set as the static folder so we can access the HTML files to display our frontend, so we write the following express code while including the path module which is a node js core module
 app.use(express.static(path.join(__dirname, "public")));
-const botName = "ChatCord Bot";
+const botName = "ChatBot";
 
 //Run when a client connects
 io.on("connection", (socket) => {
