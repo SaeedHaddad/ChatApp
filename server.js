@@ -1,16 +1,16 @@
 const path = require("path");
 const express = require("express");
 const http = require("http");
-const socketio = require("socket.io");
+const socketIO = require("socket.io");
 const formatMessage = require("./utils/messages");
 const { userJoin, getCurrentUser, userLeave } = require("./utils/users");
 const redis = require("redis");
 require("dotenv").config();
 const { createClient } = redis;
 
-const app = express();
+const app = express(); //Create an express instance
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketIO(server);
 
 // Set static folder to serve HTML and frontend assets
 app.use(express.static(path.join(__dirname, "public")));
