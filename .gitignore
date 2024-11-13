@@ -1,3 +1,4 @@
+node_modules/
 node_modules/.package-lock.json
 node_modules/.bin/mime
 node_modules/.bin/mime.cmd
@@ -2936,3 +2937,4 @@ node_modules/uid2/promises.js
 node_modules/uid2/README.md
 node_modules/uid2/test.js
 dump.rdb
+.env
