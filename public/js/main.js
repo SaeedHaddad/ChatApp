@@ -3,6 +3,7 @@ const chatForm = document.getElementById("chat-form"); //to access the form elem
 const chatMessages = document.querySelector(".chat-messages");
 const roomName = document.getElementById("room-name");
 const userList = document.getElementById("users");
+const leaveButton = document.getElementById("leave-btn"); // Add reference to leave button
 
 //Get username and room from URL
 const { username, room } = Qs.parse(location.search, {
@@ -68,3 +69,9 @@ function outputUsers(users) {
     userList.appendChild(li);
   });
 }
+
+// Listen for the "Leave Room" button click
+leaveButton.addEventListener("click", () => {
+  socket.emit("leaveRoom"); // Emit the leaveRoom event to the server
+  window.location.href = "/"; // Optionally redirect the user to the homepage or another page
+});

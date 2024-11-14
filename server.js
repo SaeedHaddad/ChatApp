@@ -4,7 +4,12 @@ const express = require("express");
 const http = require("http");
 const socketIO = require("socket.io");
 const formatMessage = require("./utils/messages");
-const { userJoin, getCurrentUser, userLeave } = require("./utils/users");
+const {
+  userJoin,
+  getCurrentUser,
+  userLeave,
+  getRoomUsers,
+} = require("./utils/users");
 const redis = require("redis");
 require("dotenv").config();
 const { createClient } = redis;
@@ -118,22 +123,19 @@ const botName = "ChatBot";
       socket.on("leaveRoom", async () => {
         const user = getCurrentUser(socket.id);
         if (user) {
-          await removeUserFromRoom(user.room, socket.id); //* Remove user from Redis
+          await removeUserFromRoom(user.room, socket.id); // Remove user from Redis
+          socket.leave(user.room); // Explicitly leave the room
 
-          //! Notify other users that the user has left
+          // Send room updates and notify other users
           const leaveMessage = formatMessage(
             botName,
             `${user.username} has left the chat.`
           );
-          await storeMessage(user.room, leaveMessage); //* Store leave message
+          await storeMessage(user.room, leaveMessage);
           io.to(user.room).emit("message", leaveMessage);
 
-          //! Send updated room users list to all users in the room
           const users = await getRoomUsers(user.room);
-          io.to(user.room).emit("roomUsers", {
-            room: user.room,
-            users: users,
-          });
+          io.to(user.room).emit("roomUsers", { room: user.room, users: users });
         }
       });
 
@@ -168,5 +170,3 @@ const botName = "ChatBot";
 //! Set server to listen on specified port
 const PORT = process.env.PORT || 3000;
 server.listen(PORT, () => console.log(`Server is running on port: ${PORT}`));
-
-//? https://chatgpt.com/c/67346340-047c-8006-87ac-4257ad6edcd5
